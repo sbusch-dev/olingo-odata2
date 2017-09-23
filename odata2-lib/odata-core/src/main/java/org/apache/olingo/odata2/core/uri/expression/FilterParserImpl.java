@@ -506,11 +506,13 @@ public class FilterParserImpl implements FilterParser {
       if (edmProperty != null) {
         property.setEdmProperty(edmProperty);
         property.setEdmType(edmProperty.getType());
-        if (edmProperty.getMultiplicity() == EdmMultiplicity.MANY) {
-          throw new ExpressionParserException(
-              ExpressionParserException.INVALID_MULTIPLICITY.create()
-                  .addContent(propertyName)
-                  .addContent(propertyToken.getPosition() + 1));
+        if(isLastFilterElement(propertyName)) {
+          if (edmProperty.getMultiplicity() == EdmMultiplicity.MANY) {
+            throw new ExpressionParserException(
+                ExpressionParserException.INVALID_MULTIPLICITY.create()
+                    .addContent(propertyName)
+                    .addContent(propertyToken.getPosition() + 1));
+          }
         }
       } else {
         // Tested with TestParserExceptions.TestPMvalidateEdmProperty CASE 3
@@ -522,6 +524,11 @@ public class FilterParserImpl implements FilterParser {
       // not Tested, should not occur
       throw ExpressionParserInternalError.createERROR_ACCESSING_EDM(e);
     }
+  }
+
+  private boolean isLastFilterElement(String propertyName) {
+    final String lastElement = "/" + propertyName + " ";
+    return curExpression.contains(lastElement);
   }
 
   protected void validateUnaryOperatorTypes(final UnaryExpression unaryExpression)
