@@ -526,9 +526,18 @@ public class FilterParserImpl implements FilterParser {
     }
   }
 
+  /**
+   * Check if the property name is the last or only element of the filter
+   * @param propertyName name of the property
+   * @return <code>true</code> if this is the last or only otherwise <code>false</code>
+   */
   private boolean isLastFilterElement(String propertyName) {
-    final String lastElement = "/" + propertyName + " ";
-    return curExpression.contains(lastElement);
+    if(curExpression.contains("/")) {
+      final String lastElement = "/" + propertyName + " ";
+      return curExpression.contains(lastElement);
+    }
+    // if no `/` is present this property is implicit the last filter element
+    return true;
   }
 
   protected void validateUnaryOperatorTypes(final UnaryExpression unaryExpression)
